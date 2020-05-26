@@ -28,7 +28,7 @@ RUN apt-get install -y \
     cmigemo \
     git \
     zip unzip \
-    make automake autoconf libreadline-dev libncurses-dev libssl-dev libyaml-dev libxslt-dev libffi-dev libtool unixodbc-dev zlib1g-dev \
+    make automake autoconf libreadline-dev libncurses-dev libssl-dev libyaml-dev libxslt-dev libffi-dev libtool unixodbc-dev zlib1g-dev bsdmainutils \
 &&  wget -q -O - "${CHROME_KEY}" | apt-key add - \
 &&  echo "${CHROME_REP}" >> /etc/apt/sources.list.d/google.list \
 &&  apt-get update -y \
@@ -61,7 +61,9 @@ RUN source ~/.asdf/asdf.sh \
 &&  echo 'pry' >> ~/.default-gems \
 &&  echo 'solargraph' >> ~/.default-gems \
 &&  echo 'rubocop' >> ~/.default-gems \
-&&  asdf install ruby latest \
-&&  asdf install rust latest
+&&  asdf install ruby 2.7.1 \
+&&  asdf global ruby 2.7.1 \
+&&  asdf install rust 1.43.1 \
+&&  asdf global rust 1.43.1
 
 WORKDIR /root/repos
