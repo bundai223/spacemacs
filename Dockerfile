@@ -31,6 +31,7 @@ RUN apt-get install -y \
     git-flow \
     zip unzip \
     make automake autoconf libreadline-dev libncurses-dev libssl-dev libyaml-dev libxslt-dev libffi-dev libtool unixodbc-dev zlib1g-dev bsdmainutils \
+    build-essential libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev software-properties-common \
 &&  wget -q -O - "${CHROME_KEY}" | apt-key add - \
 &&  echo "${CHROME_REP}" >> /etc/apt/sources.list.d/google.list \
 &&  apt-get update -y \
@@ -60,8 +61,11 @@ RUN source ~/.asdf/asdf.sh \
 &&  rm -f ~/.default-gems \
 &&  echo 'bundler' >> ~/.default-gems \
 &&  echo 'pry' >> ~/.default-gems \
+&&  echo 'pry-doc' >> ~/.default-gems \
 &&  echo 'solargraph' >> ~/.default-gems \
 &&  echo 'rubocop' >> ~/.default-gems \
+&&  echo 'ruby_parser' >> ~/.default-gems \
+&&  echo 'seeing_is_believing' >> ~/.default-gems \
 &&  asdf install ruby latest \
 &&  asdf global ruby $(asdf list ruby)
 
@@ -75,7 +79,9 @@ RUN source ~/.asdf/asdf.sh \
 RUN source ~/.asdf/asdf.sh \
 &&  asdf plugin-add golang https://github.com/kennyp/asdf-golang.git \
 &&  asdf install golang latest \
-&&  asdf global golang $(asdf list golang)
+&&  asdf global golang $(asdf list golang) \
+&&  go get github.com/motemen/ghq \
+&&  asdf reshim golang
 
 # install nodejs
 RUN source ~/.asdf/asdf.sh \
