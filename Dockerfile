@@ -66,6 +66,8 @@ RUN source ~/.asdf/asdf.sh \
 &&  echo 'rubocop' >> ~/.default-gems \
 &&  echo 'ruby_parser' >> ~/.default-gems \
 &&  echo 'seeing_is_believing' >> ~/.default-gems \
+&&  echo 'ruby-debug-ide' >> ~/.default-gems \
+&&  echo 'debase' >> ~/.default-gems \
 &&  asdf install ruby latest \
 &&  asdf global ruby $(asdf list ruby)
 
