@@ -1,4 +1,5 @@
 FROM ubuntu:20.10 as emacs
+ENV DATE=20200603
 
 RUN apt-get update -y \
 &&  apt-get install -y \
