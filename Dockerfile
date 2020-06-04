@@ -20,6 +20,8 @@ ENV TZ=Asia/Tokyo
 ENV CHROME_KEY="https://dl-ssl.google.com/linux/linux_signing_key.pub" \
     CHROME_REP="deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
+ARG HACKGEN_VER=2.0.0
+
 RUN apt-get install -y \
     language-pack-ja-base language-pack-ja \
     python \
@@ -44,15 +46,18 @@ RUN apt-get install -y \
     --no-sandbox \
     https://example.org/ \
 &&  locale-gen ja_JP.UTF-8 \
-&&  mkdir -p ~/.fonts \
-&&  cd ~/.fonts \
-&&  wget https://github.com/yuru7/HackGen/releases/download/v1.4.1/HackGen_v1.4.1.zip \
-&&  unzip HackGen_v1.4.1.zip \
-&&  mv HackGen_v1.4.1/*.ttf ~/.fonts \
-&&  rm -rf HackGen_v1.4.1* \
+&&  mkdir -p ~/.local/share/fonts \
+&&  cd ~/.local/share/fonts \
+&&  wget https://github.com/yuru7/HackGen/releases/download/v${HACKGEN_VER}/HackGenNerd_v${HACKGEN_VER}.zip \
+&&  unzip HackGenNerd_v${HACKGEN_VER}.zip \
+&&  mv HackGenNerd_v${HACKGEN_VER}/*.ttf ~/.local/share/fonts \
+&&  rm -rf HackGenNerd_v${HACKGEN_VER}* \
+&&  wget https://github.com/googlefonts/noto-emoji/raw/master/fonts/NotoColorEmoji.ttf -O NotoColorEmoji.ttf \
+&&  wget https://github.com/googlefonts/noto-emoji/raw/master/fonts/NotoEmoji-Regular.ttf -O NotoEmoji-Regular.ttf \
 &&  fc-cache -fv \
 &&  git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d \
-&&  git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+&&  git clone https://github.com/asdf-vm/asdf.git ~/.asdf \
+&&  mkdir -p ~/.emacs/private/layers
 
 SHELL ["/bin/bash", "-c"]
 
@@ -84,6 +89,7 @@ RUN source ~/.asdf/asdf.sh \
 &&  asdf install golang latest \
 &&  asdf global golang $(asdf list golang) \
 &&  go get github.com/motemen/ghq \
+&&  git clone https://github.com/sei40kr/spacemacs-ghq ~/.emacs/private/layers/ghq \
 &&  asdf reshim golang
 
 # install nodejs
