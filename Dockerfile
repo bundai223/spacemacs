@@ -1,5 +1,7 @@
 FROM ubuntu:20.10 as emacs
-ENV DATE=20200603
+ENV DATE=20200609
+ENV HOME=/root
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -y \
 &&  apt-get install -y \
@@ -7,7 +9,37 @@ RUN apt-get update -y \
     curl \
     gcc \
     wget \
+    zip unzip \
+    git \
+    git-flow \
     emacs
+
+FROM emacs as font
+
+ARG HACKGEN_VER=2.0.0
+
+RUN mkdir -p ${HOME}/.local/share/fonts \
+&&  cd ~/.local/share/fonts \
+# &&  wget https://github.com/googlefonts/noto-emoji/raw/master/fonts/NotoColorEmoji.ttf -O NotoColorEmoji.ttf \
+# &&  wget https://github.com/googlefonts/noto-emoji/raw/master/fonts/NotoEmoji-Regular.ttf -O NotoEmoji-Regular.ttf \
+&&  wget https://github.com/yuru7/HackGen/releases/download/v${HACKGEN_VER}/HackGenNerd_v${HACKGEN_VER}.zip \
+&&  unzip HackGenNerd_v${HACKGEN_VER}.zip \
+&&  mv HackGenNerd_v${HACKGEN_VER}/*.ttf ~/.local/share/fonts \
+&&  rm -rf HackGenNerd_v${HACKGEN_VER}*
+
+FROM emacs as chrome
+ENV CHROME_KEY="https://dl-ssl.google.com/linux/linux_signing_key.pub" \
+    CHROME_REP="deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+
+RUN wget -q -O - "${CHROME_KEY}" | apt-key add - \
+&&  echo "${CHROME_REP}" >> /etc/apt/sources.list.d/google.list \
+&&  apt-get update -y \
+&&  apt-get install -y google-chrome-stable \
+&&  google-chrome \
+    --disable-gpu \
+    --headless \
+    --no-sandbox \
+    https://example.org/
 
 FROM emacs
 
@@ -17,11 +49,7 @@ MAINTAINER bundai223 <bundai223@gmail.com>
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Tokyo
 
-ENV CHROME_KEY="https://dl-ssl.google.com/linux/linux_signing_key.pub" \
-    CHROME_REP="deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
-
-ARG HACKGEN_VER=2.0.0
-
+COPY --from=font ${HOME}/.local/share/fonts ${HOME}/.local/share/fonts
 RUN apt-get install -y \
     language-pack-ja-base language-pack-ja \
     python \
@@ -30,34 +58,18 @@ RUN apt-get install -y \
     aspell \
     aspell-en \
     cmigemo \
-    git \
-    git-flow \
-    zip unzip \
+    docker.io \
     make automake autoconf libreadline-dev libncurses-dev libssl-dev libyaml-dev libxslt-dev libffi-dev libtool unixodbc-dev zlib1g-dev bsdmainutils \
     build-essential libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev software-properties-common \
-&&  wget -q -O - "${CHROME_KEY}" | apt-key add - \
-&&  echo "${CHROME_REP}" >> /etc/apt/sources.list.d/google.list \
-&&  apt-get update -y \
-&&  apt-get install -y google-chrome-stable \
+    fonts-symbola \
+&&  curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
+&&  chmod +x /usr/local/bin/docker-compose \
 &&  rm -rf /tmp/* /var/lib/apt/lists/* \
-&&  google-chrome \
-    --disable-gpu \
-    --headless \
-    --no-sandbox \
-    https://example.org/ \
 &&  locale-gen ja_JP.UTF-8 \
-&&  mkdir -p ~/.local/share/fonts \
-&&  cd ~/.local/share/fonts \
-&&  wget https://github.com/yuru7/HackGen/releases/download/v${HACKGEN_VER}/HackGenNerd_v${HACKGEN_VER}.zip \
-&&  unzip HackGenNerd_v${HACKGEN_VER}.zip \
-&&  mv HackGenNerd_v${HACKGEN_VER}/*.ttf ~/.local/share/fonts \
-&&  rm -rf HackGenNerd_v${HACKGEN_VER}* \
-&&  wget https://github.com/googlefonts/noto-emoji/raw/master/fonts/NotoColorEmoji.ttf -O NotoColorEmoji.ttf \
-&&  wget https://github.com/googlefonts/noto-emoji/raw/master/fonts/NotoEmoji-Regular.ttf -O NotoEmoji-Regular.ttf \
 &&  fc-cache -fv \
 &&  git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d \
 &&  git clone https://github.com/asdf-vm/asdf.git ~/.asdf \
-&&  mkdir -p ~/.emacs/private/layers
+&&  mkdir -p ~/.emacs.d/private/layers
 
 SHELL ["/bin/bash", "-c"]
 
@@ -89,7 +101,7 @@ RUN source ~/.asdf/asdf.sh \
 &&  asdf install golang latest \
 &&  asdf global golang $(asdf list golang) \
 &&  go get github.com/motemen/ghq \
-&&  git clone https://github.com/sei40kr/spacemacs-ghq ~/.emacs/private/layers/ghq \
+&&  git clone https://github.com/sei40kr/spacemacs-ghq ~/.emacs.d/private/layers/ghq \
 &&  asdf reshim golang
 
 # install nodejs
