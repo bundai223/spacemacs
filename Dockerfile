@@ -68,7 +68,9 @@ RUN sudo apt-get install -y --no-install-recommends \
 &&  rm -rf HackGenNerd_v${HACKGEN_VER}* \
 &&  fc-cache -fv \
 &&  git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d \
-&&  git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+&&  git clone https://github.com/asdf-vm/asdf.git ~/.asdf \
+ && mkdir -p ~/.emacs.d/private/layers \
+ && git clone https://github.com/sei40kr/spacemacs-ghq.git ~/.emacs.d/private/layers/ghq
 
 SHELL ["/bin/bash", "-c"]
 
