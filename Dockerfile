@@ -16,7 +16,7 @@ MAINTAINER bundai223 <bundai223@gmail.com>
 # tzdataのインストールでgitが入っているとinteractiveになってしまうのを抑制
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Tokyo
-ENV HACKGEN_VER=2.0.0
+ENV HACKGEN_VER=2.1.1
 
 ENV CHROME_KEY="https://dl-ssl.google.com/linux/linux_signing_key.pub" \
     CHROME_REP="deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
@@ -50,27 +50,27 @@ RUN sudo apt-get install -y --no-install-recommends \
     zip unzip \
     make automake autoconf libreadline-dev libncurses-dev libssl-dev libyaml-dev libxslt-dev libffi-dev libtool unixodbc-dev zlib1g-dev bsdmainutils \
     build-essential libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev software-properties-common \
-&&  sudo wget -q -O - "${CHROME_KEY}" | sudo apt-key add - \
-&&  sudo apt-get update -y \
-&&  sudo apt-get install -y --no-install-recommends google-chrome-stable \
-&&  sudo apt-get -y clean \
-&&  sudo rm -rf /tmp/* /var/lib/apt/lists/* \
-&&  google-chrome \
+ && sudo wget -q -O - "${CHROME_KEY}" | sudo apt-key add - \
+ && sudo apt-get update -y \
+ && sudo apt-get install -y --no-install-recommends google-chrome-stable \
+ && sudo apt-get -y clean \
+ && sudo rm -rf /tmp/* /var/lib/apt/lists/* \
+ && google-chrome \
     --disable-gpu \
     --headless \
     --no-sandbox \
     https://example.org/ \
-&&  mkdir -p ~/.fonts \
-&&  cd ~/.fonts \
-&&  wget https://github.com/yuru7/HackGen/releases/download/v${HACKGEN_VER}/HackGenNerd_v${HACKGEN_VER}.zip \
-&&  unzip HackGenNerd_v${HACKGEN_VER}.zip \
-&&  mv HackGenNerd_v${HACKGEN_VER}/*.ttf ~/.fonts \
-&&  rm -rf HackGenNerd_v${HACKGEN_VER}* \
-&&  fc-cache -fv \
-&&  git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d \
-&&  git clone https://github.com/asdf-vm/asdf.git ~/.asdf \
+ && mkdir -p ~/.fonts \
+ && cd ~/.fonts \
+ && wget https://github.com/yuru7/HackGen/releases/download/v${HACKGEN_VER}/HackGenNerd_v${HACKGEN_VER}.zip \
+ && unzip HackGenNerd_v${HACKGEN_VER}.zip \
+ && mv HackGenNerd_v${HACKGEN_VER}/*.ttf ~/.fonts \
+ && rm -rf HackGenNerd_v${HACKGEN_VER}* \
+ && fc-cache -fv \
+ && git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d \
+ && git clone https://github.com/asdf-vm/asdf.git ~/.asdf \
  && mkdir -p ~/.emacs.d/private/layers \
- && git clone https://github.com/sei40kr/spacemacs-ghq.git ~/.emacs.d/private/layers/ghq
+ && git clone https://github.com/evacchi/tabbar-layer.git ~/.emacs.d/private/layers/tabbar
 
 SHELL ["/bin/bash", "-c"]
 
